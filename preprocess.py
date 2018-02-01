@@ -1,30 +1,44 @@
-# -*- coding: UTF-8 -*-
+# coding:utf8
 import numpy as np
 import os
 import sys
 import pandas as pd
-import BeautifulSoup as soup
+from bs4 import BeautifulSoup
+import chardet
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 # read data
 current_path = os.path.dirname(os.path.realpath(__file__))
-print current_path
-parent_path = os.path.dirname(current_path) 
+parent_path = os.path.dirname(current_path)
 train_file_en = parent_path + "/data/train/train/500train.en"
-train_file_ch = parent_path + "/data/train/train/500train.ch"
-eval_file_en = parent_path + "/data/eval/eval/500valid.en-zh.en.sgm"
-eval_file_ch = parent_path + "/data/train/train/500valid.en-zh.zh.sgm"
-# tf = "/etc/360/BDCI2017-360/evaluation_public.tsv"
+train_file_zh = parent_path + "/data/train/train/500train.zh"
+eval_file_en_sgm = parent_path + "/data/eval/eval/500valid.en-zh.en.sgm"
+eval_file_zh_sgm = parent_path + "/data/eval/eval/500valid.en-zh.zh.sgm"
+
 
 def read_sgm(sgm_file):
+    # a new file: delete ".sgm"
+    filename = sgm_file[:-4]
+    output = open(filename, 'w')
     with open(sgm_file, 'r') as f:
-        soup = soup(f)
-        head = soup.find('srcset')
-        print head
+        for line in f.readlines():
+            soup = BeautifulSoup(line, "html5lib")
+            if soup.find('seg'):
+                output.write(str(soup.seg.string) + '\n')
+
+def jieba(zh_file):
+    with open(tf, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            lines.append(line.strip().split('\t'))
 
 
 if __name__ == '__main__':
-    gen_data_loader = Gen_Data_loader(64)
-    gen_data_loader.create_batches('data/real_data.txt')
+    read_sgm(eval_file_zh_sgm)
+    read_sgm(eval_file_en_sgm)
+    jieba(train_file_zh)
+    # gen_data_loader = Gen_Data_loader(64)
+    # gen_data_loader.create_batches('data/real_data.txt')
 
 
 # lines = []
