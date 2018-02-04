@@ -7,7 +7,10 @@ from discriminator import Discriminator
 from rollout import ROLLOUT
 from target_lstm import TARGET_LSTM
 import cPickle
+import os
 
+current_path = os.path.dirname(os.path.realpath(__file__))
+parent_path = os.path.dirname(current_path)
 #########################################################################################
 #  Generator  Hyper-parameters
 ######################################################################################
@@ -33,9 +36,10 @@ dis_batch_size = 64
 #  Basic Training Parameters
 #########################################################################################
 TOTAL_BATCH = 200
-positive_file = 'data/real_data.txt'
-negative_file = 'data/generator_sample.txt'
-eval_file = 'data/eval_file.txt'
+positive_file = 'real_data.txt'
+negative_file = 'generator_sample.txt'
+eval_file = parent_path + '/data/eval/eval_file.csv'
+train_file = parent_path + '/data/train/train_file.csv'
 generated_num = 10000
 
 
@@ -84,15 +88,11 @@ def main():
     assert START_TOKEN == 0
 
     gen_data_loader = Gen_Data_loader(BATCH_SIZE)
-    likelihood_data_loader = Gen_Data_loader(BATCH_SIZE) # For testing
+    eval_data_loader = Gen_Data_loader(BATCH_SIZE) # For testing
     vocab_size = 5000
     dis_data_loader = Dis_dataloader(BATCH_SIZE)
 
-    # TODO add initialization for generator
-    # generator = Generator(vocab_size, BATCH_SIZE, EMB_DIM, HIDDEN_DIM, SEQ_LENGTH, START_TOKEN)
-    # target_params = cPickle.load(open('save/target_params.pkl'))
-    # target_lstm = TARGET_LSTM(vocab_size, BATCH_SIZE, EMB_DIM, HIDDEN_DIM, SEQ_LENGTH, START_TOKEN, target_params)
-
+    generator = Generator(vocab_size, BATCH_SIZE, EMB_DIM, HIDDEN_DIM, SEQ_LENGTH, START_TOKEN)
     discriminator = Discriminator(sequence_length=20, num_classes=2, vocab_size=vocab_size, embedding_size=dis_embedding_dim, 
                                   filter_sizes=dis_filter_sizes, num_filters=dis_num_filters, l2_reg_lambda=dis_l2_reg_lambda)
 
